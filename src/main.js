@@ -13,11 +13,11 @@ const FILTER_TITLES = [
 const FILTER_CHECKED = FILTER_TITLES[0];
 const TRIP_POINT_COUNT_START = 7;
 
-const checkedFilter = function (fragment, filter) {
+const checkedFilter = (fragment, filter) => {
   fragment.getElementById(`filter-${filter}`).checked = true;
 };
 
-const resetCards = function () {
+const resetCards = () => {
   while (TRIP_DAY_ITEMS.firstChild) {
     TRIP_DAY_ITEMS.removeChild(TRIP_DAY_ITEMS.firstChild);
   }
@@ -26,7 +26,7 @@ const resetCards = function () {
 
 const onFilterClick = () => resetCards();
 
-const switchFilter = function () {
+const switchFilter = () => {
   let filters = document.querySelectorAll(`.trip-filter__item`);
   for (let i = 0; i < filters.length; i++) {
     filters[i].addEventListener(`click`, onFilterClick);

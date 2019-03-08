@@ -5,8 +5,6 @@ const DESCRIPTIONS_MIN = 1;
 const OFFERS_MAX = 3;
 const PRICE_MAX = 300;
 const PRICE_MIN = 10;
-const HOUR_MAX = 24;
-const MINUTES_MAX = 60;
 const TYPES = new Map([
   [`Taxi`, `🚕`],
   [`Bus`, `🚌`],
