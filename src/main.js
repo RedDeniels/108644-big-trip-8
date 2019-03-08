@@ -11,18 +11,6 @@ const FILTER_TITLES = [
   `past`
 ];
 const FILTER_CHECKED = FILTER_TITLES[0];
-const TRIP_POINT_ICONS = [
-  `🚕`,
-  `✈️`,
-  `🚗`,
-  `🏨`
-];
-const TRIP_POINT_TITLES = [
-  `Taxi to Airport`,
-  `Flight to Geneva`,
-  `Drive to Chamonix`,
-  `Check into a hotel`
-];
 const TRIP_POINT_COUNT_START = 7;
 
 const checkedFilter = function (fragment, filter) {
@@ -33,7 +21,7 @@ const resetCards = function () {
   while (TRIP_DAY_ITEMS.firstChild) {
     TRIP_DAY_ITEMS.removeChild(TRIP_DAY_ITEMS.firstChild);
   }
-  renderTripPoint(TRIP_POINT_ICONS, TRIP_POINT_TITLES, randomCount(10));
+  makeTripPoints(randomCount(10));
 };
 
 const onFilterClick = () => resetCards();
