@@ -4,7 +4,7 @@ import {dateTranfer} from './util.js';
 const dateToTimeField = (date) => `${date.getHours()}:${date.getMinutes()}`;
 const timeToTravel = (start, finish) => `${finish.getHours() - start.getHours()}h ${finish.getMinutes() - start.getMinutes()}m`;
 
-export default (point) => `<article class="trip-point">
+const makePoints = (point) => `<article class="trip-point">
             <i class="trip-icon">${point.type[1]}</i>
             <h3 class="trip-point__title">${point.type[0]} to ${point.country}</h3>
             <p class="trip-point__schedule">
@@ -16,3 +16,5 @@ export default (point) => `<article class="trip-point">
               ${makeOffers(point.offers)}
             </ul>
           </article>`;
+
+export {makePoints};

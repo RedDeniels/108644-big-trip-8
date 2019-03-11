@@ -5,5 +5,4 @@ const randomCount = (...counts) => {
 
 const dateTranfer = (number) => new Date(number);
 
-export {randomCount};
-export {dateTranfer};
+export {randomCount, dateTranfer};
