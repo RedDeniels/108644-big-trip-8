@@ -1,3 +1,8 @@
-const randomCount = (max) => Math.floor(Math.random() * max);
+const randomCount = (...counts) => {
+  const [max, min = 0] = counts;
+  return Math.floor(Math.random() * (max - min) + min);
+};
 
-export {randomCount};
+const dateTranfer = (number) => new Date(number);
+
+export {randomCount, dateTranfer};
