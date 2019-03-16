@@ -1,5 +1,5 @@
 import makeFilter from './make-filter.js';
-import {makeTripPoint} from './make-trip-points.js';
+import {makePoints} from './make-trip-points.js';
 import {randomCount} from './util.js';
 import {getPoint} from './data.js';
 
@@ -51,7 +51,7 @@ const renderTripPoint = (points) => {
   let template = document.createElement(`template`);
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < points.length; i++) {
-    template.insertAdjacentHTML(`beforeend`, makeTripPoint(points[i]));
+    template.insertAdjacentHTML(`beforeend`, makePoints(points[i]));
     for (let j = 0; j < template.children.length;) {
       fragment.appendChild(template.children[j]);
     }
