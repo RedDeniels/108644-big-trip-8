@@ -1,5 +1,5 @@
 import makeFilter from './make-filter.js';
-import {makePoints} from './make-trip-points.js';
+import {Trip} from './trip.js';
 import {randomCount} from './util.js';
 import {getPoint} from './data.js';
 
@@ -12,6 +12,7 @@ const FILTER_TITLES = [
 ];
 const FILTER_CHECKED = FILTER_TITLES[0];
 const TRIP_POINT_COUNT_START = 7;
+let trips = [];
 
 const checkedFilter = (fragment, filter) => {
   fragment.getElementById(`filter-${filter}`).checked = true;
@@ -47,11 +48,15 @@ const renderFilters = (filters) => {
   switchFilter();
 };
 
+renderFilters(FILTER_TITLES);
+
 const renderTripPoint = (points) => {
+  debugger;
   let template = document.createElement(`template`);
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < points.length; i++) {
-    template.insertAdjacentHTML(`beforeend`, makePoints(points[i]));
+    trips[i] = new Trip(points[i]);
+    trips[i].render(template);
     for (let j = 0; j < template.children.length;) {
       fragment.appendChild(template.children[j]);
     }
@@ -67,5 +72,4 @@ const makeTripPoints = (count) => {
   renderTripPoint(tripPoints);
 };
 
-renderFilters(FILTER_TITLES);
 makeTripPoints(TRIP_POINT_COUNT_START);

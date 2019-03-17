@@ -1,5 +1,7 @@
 import {randomCount} from './util.js';
 
+const OFFER_PRICE_MAX = 100;
+const OFFER_PRICE_MIN = 10;
 const DESCRIPTIONS_MAX = 3;
 const DESCRIPTIONS_MIN = 1;
 const OFFERS_MAX = 3;
@@ -87,4 +89,4 @@ const getPoint = () => ({
   description: getDescription(),
 });
 
-export {getPoint};
+export {getPoint, OFFER_PRICE_MAX, OFFER_PRICE_MIN};
