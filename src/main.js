@@ -55,7 +55,7 @@ const renderTripPoint = (points) => {
   let template = document.createElement(`template`);
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < points.length; i++) {
-    trips[i] = new TripEdit(points[i]);
+    trips[i] = new Trip(points[i]);
     trips[i].render(template);
     for (let j = 0; j < template.children.length;) {
       fragment.appendChild(template.children[j]);

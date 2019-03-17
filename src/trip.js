@@ -1,4 +1,4 @@
-//  import {transfer} from './switch-task.js';
+import {transfer} from './switch-trip.js';
 import {dateTranfer} from './util.js';
 import {createElement} from './create-element.js';
 import {makeOffers} from './make-offers.js';
@@ -15,6 +15,8 @@ class Trip {
     this._photos = data.photos;
 
     this._element = null;
+    this._onEdit = null;
+    this._onBodyClick = this._onBodyClick.bind(this);
   }
 
   startToField() {
@@ -29,14 +31,30 @@ class Trip {
     return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
   }
 
+  _onBodyClick() {
+    transfer(this);
+    if (typeof this._onEdit === `function`) {
+      this._onEdit();
+    }
+  }
+
+  bind() {
+    this._element.addEventListener(`click`, this._onBodyClick.bind(this));
+  }
+
+  unbind() {
+    this._element.removeEventListener(`click`, this._onBodyClick.bind(this));
+  }
+
   unrender() {
-    //  this.unbind();
+    this.unbind();
     this._element = null;
   }
 
   render(container) {
     this._element = createElement(this.template);
     container.appendChild(this._element);
+    this.bind();
     return this._element;
   }
 

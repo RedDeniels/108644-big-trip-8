@@ -1,7 +1,7 @@
 import {getPoint} from './data.js';
 import {Trip} from './trip.js';
 import {TripEdit} from './trip-edit.js';
-//  import {TRIP_DAY_ITEMS} from './main.js';
+import {TRIP_DAY_ITEMS} from './main.js';
 
 const exchange = (oldTrip, newTrip) => {
   newTrip._type = oldTrip._type;
@@ -16,11 +16,11 @@ const exchange = (oldTrip, newTrip) => {
 const tripToEdit = (oldTrip) => {
   let newTrip = new TripEdit(getPoint());
   exchange(oldTrip, newTrip);
-//  oldTrip.onEdit = () => {
-//    newTrip.render(TRIP_DAY_ITEMS);
-//    TRIP_DAY_ITEMS.replaceChild(newTrip._element, oldTrip._element);
-//    oldTrip.unrender();
-//  };
+  oldTrip._onEdit = () => {
+    newTrip.render(TRIP_DAY_ITEMS);
+    TRIP_DAY_ITEMS.replaceChild(newTrip._element, oldTrip._element);
+    oldTrip.unrender();
+  };
 };
 
 const editToTrip = (oldTrip) => {
