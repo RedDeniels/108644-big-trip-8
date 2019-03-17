@@ -1,5 +1,6 @@
 import makeFilter from './make-filter.js';
 import {Trip} from './trip.js';
+import {TripEdit} from './trip-edit.js';
 import {randomCount} from './util.js';
 import {getPoint} from './data.js';
 
@@ -51,11 +52,10 @@ const renderFilters = (filters) => {
 renderFilters(FILTER_TITLES);
 
 const renderTripPoint = (points) => {
-  debugger;
   let template = document.createElement(`template`);
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < points.length; i++) {
-    trips[i] = new Trip(points[i]);
+    trips[i] = new TripEdit(points[i]);
     trips[i].render(template);
     for (let j = 0; j < template.children.length;) {
       fragment.appendChild(template.children[j]);

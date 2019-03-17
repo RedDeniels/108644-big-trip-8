@@ -1,4 +1,3 @@
-//  import {createElement} from './create-element.js';
 //  import {transfer} from './switch-task.js';
 import {dateTranfer} from './util.js';
 import {createElement} from './create-element.js';
@@ -13,6 +12,7 @@ class Trip {
     this._price = data.price;
     this._offers = data.offers;
     this._description = data.description;
+    this._photos = data.photos;
 
     this._element = null;
   }
@@ -29,14 +29,9 @@ class Trip {
     return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
   }
 
-  bind() {
-    this._element.querySelector(`.card__btn--edit`).addEventListener(`click`, this._onEditButtonClick.bind(this));
-  }
-
   render(container) {
     this._element = createElement(this.template);
     container.appendChild(this._element);
-    // this.bind();
     return this._element;
   }
 
@@ -50,7 +45,7 @@ class Trip {
             </p>
             <p class="trip-point__price">&euro;&nbsp;${this._price}</p>
             <ul class="trip-point__offers">
-              ${makeOffers(this._offers)}
+              ${makeOffers(this)}
             </ul>
           </article>`.trim();
   }

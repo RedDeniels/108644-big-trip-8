@@ -2,11 +2,13 @@ import {randomCount} from './util.js';
 
 const OFFER_PRICE_MAX = 100;
 const OFFER_PRICE_MIN = 10;
-const DESCRIPTIONS_MAX = 3;
-const DESCRIPTIONS_MIN = 1;
-const OFFERS_MAX = 3;
+const DESCRIPTIONS_MAX = 5;
+const DESCRIPTIONS_MIN = 3;
+const OFFERS_MAX = 5;
 const PRICE_MAX = 300;
 const PRICE_MIN = 10;
+const PHOTO_MAX = 10;
+const PHOTO_MIN = 5;
 const TYPES = new Map([
   [`Taxi`, `🚕`],
   [`Bus`, `🚌`],
@@ -71,6 +73,14 @@ const getOffers = (count) => {
   return pointOffers;
 };
 
+const getPhotos = (count) => {
+  let photos = [];
+  for (let i = 0; i < count; i++) {
+    photos[i] = `//picsum.photos/100/100?r=${Math.random()}`;
+  }
+  return photos;
+};
+
 const getPoint = () => ({
   type: getType(),
   country: [
@@ -87,6 +97,7 @@ const getPoint = () => ({
   price: randomCount(PRICE_MAX, PRICE_MIN),
   offers: getOffers(randomCount(OFFERS_MAX)),
   description: getDescription(),
+  photos: getPhotos(randomCount(PHOTO_MAX, PHOTO_MIN)),
 });
 
 export {getPoint, OFFER_PRICE_MAX, OFFER_PRICE_MIN};
