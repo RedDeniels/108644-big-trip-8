@@ -29,6 +29,11 @@ class TripEdit {
     return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
   }
 
+  unrender() {
+    //  this.unbind();
+    this._element = null;
+  }
+
   render(container) {
     this._element = createElement(this.template);
     container.appendChild(this._element);

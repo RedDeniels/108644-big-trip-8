@@ -73,3 +73,5 @@ const makeTripPoints = (count) => {
 };
 
 makeTripPoints(TRIP_POINT_COUNT_START);
+
+export {TRIP_DAY_ITEMS};
