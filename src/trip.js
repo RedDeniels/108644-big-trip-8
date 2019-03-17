@@ -39,11 +39,11 @@ class Trip {
   }
 
   bind() {
-    this._element.addEventListener(`click`, this._onBodyClick.bind(this));
+    this._element.addEventListener(`click`, this._onBodyClick);
   }
 
   unbind() {
-    this._element.removeEventListener(`click`, this._onBodyClick.bind(this));
+    this._element.removeEventListener(`click`, this._onBodyClick);
   }
 
   unrender() {

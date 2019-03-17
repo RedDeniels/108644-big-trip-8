@@ -26,11 +26,16 @@ const tripToEdit = (oldTrip) => {
 const editToTrip = (oldTrip) => {
   let newTrip = new Trip(getPoint());
   exchange(oldTrip, newTrip);
-//  oldTrip.onSubmit = () => {
-//    newTrip.render(TRIP_DAY_ITEMS);
-//    TRIP_DAY_ITEMS.replaceChild(newTrip._element, oldTrip._element);
-//    oldTrip.unrender();
-//  };
+  oldTrip._onSubmit = () => {
+    newTrip.render(TRIP_DAY_ITEMS);
+    TRIP_DAY_ITEMS.replaceChild(newTrip._element, oldTrip._element);
+    oldTrip.unrender();
+  };
+  oldTrip._onDelete = () => {
+    newTrip.render(TRIP_DAY_ITEMS);
+    TRIP_DAY_ITEMS.replaceChild(newTrip._element, oldTrip._element);
+    oldTrip.unrender();
+  };
 };
 
 const transfer = (oldTrip) => oldTrip instanceof Trip ? tripToEdit(oldTrip) : editToTrip(oldTrip);

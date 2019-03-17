@@ -1,4 +1,4 @@
-//  import {transfer} from './switch-task.js';
+import {transfer} from './switch-trip.js';
 import {dateTranfer} from './util.js';
 import {createElement} from './create-element.js';
 import {makeOffers} from './make-offers.js';
@@ -15,6 +15,10 @@ class TripEdit {
     this._photos = data.photos;
 
     this._element = null;
+    this._onSubmit = null;
+    this._onDelete = null;
+    this._onSubmitClick = this._onSubmitClick.bind(this);
+    this._onDeleteClick = this._onDeleteClick.bind(this);
   }
 
   startToField() {
@@ -29,14 +33,41 @@ class TripEdit {
     return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
   }
 
+  _onSubmitClick(evt) {
+    evt.preventDefault();
+    transfer(this);
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit();
+    }
+  }
+
+  _onDeleteClick(evt) {
+    evt.preventDefault();
+    transfer(this);
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+
+  bind() {
+    this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitClick);
+    this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteClick);
+  }
+
+  unbind() {
+    this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
+    this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
+  }
+
   unrender() {
-    //  this.unbind();
+    this.unbind();
     this._element = null;
   }
 
   render(container) {
     this._element = createElement(this.template);
     container.appendChild(this._element);
+    this.bind();
     return this._element;
   }
 
