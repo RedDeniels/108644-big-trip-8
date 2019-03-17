@@ -1,6 +1,5 @@
 import makeFilter from './make-filter.js';
 import {Trip} from './trip.js';
-import {TripEdit} from './trip-edit.js';
 import {randomCount} from './util.js';
 import {getPoint} from './data.js';
 
