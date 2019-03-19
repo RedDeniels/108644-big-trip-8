@@ -1,6 +1,5 @@
 import {transfer} from './switch-trip.js';
 import {dateTranfer} from './util.js';
-import {createElement} from './create-element.js';
 import {makeOffers} from './make-offers.js';
 
 class TripEdit {
@@ -62,13 +61,6 @@ class TripEdit {
   unrender() {
     this.unbind();
     this._element = null;
-  }
-
-  render(container) {
-    this._element = createElement(this.template);
-    container.appendChild(this._element);
-    this.bind();
-    return this._element;
   }
 
   get template() {

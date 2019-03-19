@@ -51,13 +51,6 @@ class Trip {
     this._element = null;
   }
 
-  render(container) {
-    this._element = createElement(this.template);
-    container.appendChild(this._element);
-    this.bind();
-    return this._element;
-  }
-
   get template() {
     return `<article class="trip-point">
             <i class="trip-icon">${this._type[1]}</i>
