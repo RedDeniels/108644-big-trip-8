@@ -1,10 +1,12 @@
 import {createElement} from './create-element.js';
 
-class Component {
+export default class Component {
   constructor() {
     if (new.target === Component) {
       throw new Error(`Can't instantiate Component, only concrete one.`);
     }
+
+    this._element = null;
   }
 
   render(container) {
@@ -14,8 +16,21 @@ class Component {
     return this._element;
   }
 
+  unrender() {
+    this.unbind();
+    this._element = null;
+  }
+
   get template() {
     throw new Error(`You have define template.`);
+  }
+
+  bind() {
+    throw new Error(`You have define bind.`);
+  }
+
+  unbind() {
+    throw new Error(`You have define unbind.`);
   }
 
 }
