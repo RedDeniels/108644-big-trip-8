@@ -1,10 +1,11 @@
+import Component from './component.js';
 import {transfer} from './switch-trip.js';
 import {dateTranfer} from './util.js';
-import {createElement} from './create-element.js';
 import {makeOffers} from './make-offers.js';
 
-class Trip {
+class Trip extends Component {
   constructor(data) {
+    super();
     this._type = data.type;
     this._country = data.country;
     this._timeStart = data.timeStart;
@@ -14,7 +15,6 @@ class Trip {
     this._description = data.description;
     this._photos = data.photos;
 
-    this._element = null;
     this._onEdit = null;
     this._onBodyClick = this._onBodyClick.bind(this);
   }
@@ -44,18 +44,6 @@ class Trip {
 
   unbind() {
     this._element.removeEventListener(`click`, this._onBodyClick);
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
-  }
-
-  render(container) {
-    this._element = createElement(this.template);
-    container.appendChild(this._element);
-    this.bind();
-    return this._element;
   }
 
   get template() {
