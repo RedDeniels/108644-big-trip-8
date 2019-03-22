@@ -46,7 +46,7 @@ class Trip extends Component {
     this._element.removeEventListener(`click`, this._onBodyClick);
   }
 
-  update(date) {
+  update(data) {
     this._type = data.type;
     this._country = data._country;
     this._timeStart = data._timeStart;

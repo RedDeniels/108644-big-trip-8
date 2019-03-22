@@ -19,6 +19,30 @@ class TripEdit extends Component {
     this._onDelete = null;
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onDeleteClick = this._onDeleteClick.bind(this);
+debugger;
+    this._state.isDate = false;
+    this._state.isType = false;
+
+    this._onChangeDate = this._onChangeDate.bind(this);
+    this._onChangeType = this._onChangeType.bind(this);
+  }
+
+  _onChangeDate() {
+    this._state.isDate = !this._state.isDate;
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
+
+  _onChangeType() {
+    this._state.isType = !this._state.isType;
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
+  }
+
+  _partialUpdate() {
+    this._element.innerHTML = this.template;
   }
 
   startToField() {
@@ -52,11 +76,23 @@ class TripEdit extends Component {
   bind() {
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteClick);
+
   }
 
   unbind() {
     this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
     this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
+  }
+
+  update(data) {
+    this._type = data.type;
+    this._country = data._country;
+    this._timeStart = data._timeStart;
+    this._timeFinish = data._timeFinish;
+    this._price = data.price;
+    this._offers = data.offers;
+    this._description = data.description;
+    this._photos = data.photos;
   }
 
   get template() {
