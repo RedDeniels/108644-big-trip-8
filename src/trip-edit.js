@@ -19,12 +19,42 @@ class TripEdit extends Component {
     this._onDelete = null;
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onDeleteClick = this._onDeleteClick.bind(this);
-debugger;
     this._state.isDate = false;
     this._state.isType = false;
 
     this._onChangeDate = this._onChangeDate.bind(this);
     this._onChangeType = this._onChangeType.bind(this);
+  }
+
+  _processForm(formData) {
+    const entry = {
+      type: [],
+      country: ``,
+      timeStart: 0,
+      timeFinish: 0,
+      price: 0,
+      offers: [],
+      description: ``,
+      photos: [],
+    };
+    const tripEditMapper = TripEdit.createMapper(entry);
+    for (const pair of formData.entries()) {
+      console.log(pair);
+      const [property, value] = pair;
+      if (tripEditMapper[property]) {
+        tripEditMapper[property](value);
+      }
+    }
+    return entry;
+  }
+
+  static createMapper(target) {
+    return {
+      destination: (value) => target.description = value,
+      price: (value) => target.price = value,
+
+
+    };
   }
 
   _onChangeDate() {
@@ -59,10 +89,13 @@ debugger;
 
   _onSubmitClick(evt) {
     evt.preventDefault();
-    transfer(this);
+
+    const formData = new FormData(this._element.querySelector(`.point__form`));
+    const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
-      this._onSubmit();
+      this._onSubmit(newData);
     }
+    this.update(newData);
   }
 
   _onDeleteClick(evt) {
@@ -97,7 +130,7 @@ debugger;
 
   get template() {
     return `<article class="point">
-  <form action="" method="get">
+  <form class="point__form" action="" method="get">
     <header class="point__header">
       <label class="point__date">
         choose day
@@ -120,7 +153,7 @@ debugger;
             <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-train" name="travel-way" value="train">
             <label class="travel-way__select-label" for="travel-way-train">🚂 train</label>
 
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travel-way" value="train" checked>
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travel-way" value="train">
             <label class="travel-way__select-label" for="travel-way-flight">✈️ flight</label>
           </div>
 

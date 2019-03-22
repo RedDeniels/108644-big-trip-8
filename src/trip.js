@@ -53,6 +53,9 @@ class Trip extends Component {
     this._timeFinish = data._timeFinish;
     this._price = data._price;
     this._offers = data._offers;
+
+    this._description = data.description;
+    this._photos = data.photos;
   }
 
   get template() {
