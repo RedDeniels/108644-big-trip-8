@@ -33,4 +33,6 @@ export default class Component {
     throw new Error(`You have define unbind.`);
   }
 
+  update() {}
+
 }

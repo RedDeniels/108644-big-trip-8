@@ -46,6 +46,15 @@ class Trip extends Component {
     this._element.removeEventListener(`click`, this._onBodyClick);
   }
 
+  update(date) {
+    this._type = data.type;
+    this._country = data._country;
+    this._timeStart = data._timeStart;
+    this._timeFinish = data._timeFinish;
+    this._price = data._price;
+    this._offers = data._offers;
+  }
+
   get template() {
     return `<article class="trip-point">
             <i class="trip-icon">${this._type[1]}</i>
