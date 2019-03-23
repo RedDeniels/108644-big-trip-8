@@ -37,9 +37,23 @@ class TripEdit extends Component {
       description: ``,
       photos: [],
     };
+    const tripType = this._element.querySelector(`.point__destination-label`).innerHTML;
+    const tripIcon = this._element.querySelector(`.travel-way__label`).innerHTML;
+    const tripPhotos = Array.from(this._element.querySelectorAll(`.point__destination-image`));
+    const tripOffers = Array.from(this._element.querySelectorAll(`.point__offers-label`));
+    for (let value of tripOffers) {
+      const service = value.querySelector(`.point__offer-service`);
+      const price = value.querySelector(`.point__offer-price`);
+      entry.offers.push(`${service.innerHTML} ${price.innerHTML}`);
+    }
+    for (let value of tripPhotos) {
+      entry.photos.push(value.getAttribute(`src`));
+    }
+    entry.description = this._element.querySelector(`.point__destination-text`).innerHTML;
+    entry.type = `${tripType} ${tripIcon}`;
+
     const tripEditMapper = TripEdit.createMapper(entry);
     for (const pair of formData.entries()) {
-      console.log(pair);
       const [property, value] = pair;
       if (tripEditMapper[property]) {
         tripEditMapper[property](value);
@@ -50,9 +64,20 @@ class TripEdit extends Component {
 
   static createMapper(target) {
     return {
-      destination: (value) => target.description = value,
-      price: (value) => target.price = value,
-
+      destination: (value) => {
+        target.country = value;
+      },
+      price: (value) => {
+        target.price = value;
+      },
+      travelWay: (value) => {
+        target.type = value;
+      },
+      time: (value) => {
+        target.timeStart = value;
+        target.timeFinish = value;
+      },
+      offer: (value) => target.offers.add(value),
 
     };
   }
@@ -89,7 +114,6 @@ class TripEdit extends Component {
 
   _onSubmitClick(evt) {
     evt.preventDefault();
-
     const formData = new FormData(this._element.querySelector(`.point__form`));
     const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
@@ -144,24 +168,24 @@ class TripEdit extends Component {
 
         <div class="travel-way__select">
           <div class="travel-way__select-group">
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-taxi" name="travel-way" value="taxi">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-taxi" name="travelWay" value="taxi">
             <label class="travel-way__select-label" for="travel-way-taxi">🚕 taxi</label>
 
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-bus" name="travel-way" value="bus">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-bus" name="travelWay" value="bus">
             <label class="travel-way__select-label" for="travel-way-bus">🚌 bus</label>
 
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-train" name="travel-way" value="train">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-train" name="travelWay" value="train">
             <label class="travel-way__select-label" for="travel-way-train">🚂 train</label>
 
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travel-way" value="train">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travelWay" value="train">
             <label class="travel-way__select-label" for="travel-way-flight">✈️ flight</label>
           </div>
 
           <div class="travel-way__select-group">
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-check-in" name="travel-way" value="check-in">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-check-in" name="travelWay" value="check-in">
             <label class="travel-way__select-label" for="travel-way-check-in">🏨 check-in</label>
 
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing" name="travel-way" value="sight-seeing">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing" name="travelWay" value="sight-seeing">
             <label class="travel-way__select-label" for="travel-way-sightseeing">🏛 sightseeing</label>
           </div>
         </div>
