@@ -2,6 +2,7 @@ import Component from './component.js';
 import {transfer} from './switch-trip.js';
 import {dateTranfer} from './util.js';
 import {makeOffers} from './make-offers.js';
+import {TYPES} from './data.js';
 
 class TripEdit extends Component {
   constructor(data) {
@@ -72,6 +73,11 @@ class TripEdit extends Component {
       },
       travelWay: (value) => {
         target.type = value;
+        for (let element of TYPES) {
+          if (value === element[0]) {
+            target.type = `${value} ${element[1]}`;
+          }
+        }
       },
       time: (value) => {
         target.timeStart = value;
@@ -177,7 +183,7 @@ class TripEdit extends Component {
             <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-train" name="travelWay" value="train">
             <label class="travel-way__select-label" for="travel-way-train">🚂 train</label>
 
-            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travelWay" value="train">
+            <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travelWay" value="flight">
             <label class="travel-way__select-label" for="travel-way-flight">✈️ flight</label>
           </div>
 
