@@ -51,7 +51,7 @@ class TripEdit extends Component {
       entry.photos.push(value.getAttribute(`src`));
     }
     entry.description = this._element.querySelector(`.point__destination-text`).innerHTML;
-    entry.type = `${tripType} ${tripIcon}`;
+    entry.type = new Map([[tripType.replace(` to`, ``), tripIcon]]);
 
     const tripEditMapper = TripEdit.createMapper(entry);
     for (const pair of formData.entries()) {
@@ -72,18 +72,13 @@ class TripEdit extends Component {
         target.price = value;
       },
       travelWay: (value) => {
-        target.type = value;
-        for (let element of TYPES) {
-          if (value === element[0]) {
-            target.type = `${value} ${element[1]}`;
-          }
-        }
+        target.type = new Map([[value, TYPES.get(value)]]);
       },
       time: (value) => {
         target.timeStart = value;
         target.timeFinish = value;
       },
-      offer: (value) => target.offers.add(value),
+      offer: (value) => target.offers.push(value),
 
     };
   }
@@ -116,6 +111,10 @@ class TripEdit extends Component {
 
   timeToTravel() {
     return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
+  }
+
+  set onSubmit(fn) {
+    this._onSubmit = fn;
   }
 
   _onSubmitClick(evt) {
