@@ -1,6 +1,5 @@
 import Component from './component.js';
-import {transfer} from './switch-trip.js';
-import {dateTranfer} from './util.js';
+import {dateTranfer, transfer} from './util.js';
 import {makeOffers} from './make-offers.js';
 
 class Trip extends Component {
@@ -17,6 +16,10 @@ class Trip extends Component {
 
     this._onEdit = null;
     this._onBodyClick = this._onBodyClick.bind(this);
+  }
+
+  set onEdit(fn) {
+    this._onEdit = fn;
   }
 
   startToField() {
@@ -48,11 +51,11 @@ class Trip extends Component {
 
   update(data) {
     this._type = data.type;
-    this._country = data._country;
-    this._timeStart = data._timeStart;
-    this._timeFinish = data._timeFinish;
-    this._price = data._price;
-    this._offers = data._offers;
+    this._country = data.country;
+    this._timeStart = data.timeStart;
+    this._timeFinish = data.timeFinish;
+    this._price = data.price;
+    this._offers = data.offers;
 
     this._description = data.description;
     this._photos = data.photos;

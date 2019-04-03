@@ -1,6 +1,5 @@
 import Component from './component.js';
-import {transfer} from './switch-trip.js';
-import {dateTranfer} from './util.js';
+import {dateTranfer, transfer} from './util.js';
 import {makeOffers} from './make-offers.js';
 import {TYPES} from './data.js';
 
@@ -25,6 +24,10 @@ class TripEdit extends Component {
 
     this._onChangeDate = this._onChangeDate.bind(this);
     this._onChangeType = this._onChangeType.bind(this);
+  }
+
+  set onSubmit(fn) {
+    this._onSubmit = fn;
   }
 
   _processForm(formData) {
@@ -148,9 +151,9 @@ class TripEdit extends Component {
 
   update(data) {
     this._type = data.type;
-    this._country = data._country;
-    this._timeStart = data._timeStart;
-    this._timeFinish = data._timeFinish;
+    this._country = data.country;
+    this._timeStart = data.timeStart;
+    this._timeFinish = data.timeFinish;
     this._price = data.price;
     this._offers = data.offers;
     this._description = data.description;
