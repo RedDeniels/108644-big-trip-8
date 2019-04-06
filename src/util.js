@@ -8,6 +8,7 @@ const randomCount = (...counts) => {
 };
 
 const transfer = (oldTrip) => {
+
   let newTrip = tripsEdit[trips.indexOf(oldTrip)];
   newTrip.render(TRIP_DAY_ITEMS);
   TRIP_DAY_ITEMS.replaceChild(tripsEdit[trips.indexOf(oldTrip)]._element, oldTrip._element);
@@ -17,14 +18,14 @@ const transfer = (oldTrip) => {
     let trip = trips[tripsEdit.indexOf(newTrip)];
     let data = tripData[tripsEdit.indexOf(newTrip)];
 
-    data._type = newObject.type;
-    data._country = newObject.country;
-    data._timeStart = newObject.timeStart;
-    data._timeFinish = newObject.timeFinish;
-    data._price = newObject.price;
-    data._offers = newObject.offers;
-    data._description = newObject.description;
-    data._photos = newObject.photos;
+    data.type = newObject.type;
+    data.country = newObject.country;
+    data.timeStart = newObject.timeStart;
+    data.timeFinish = newObject.timeFinish;
+    data.price = newObject.price;
+    data.offers = newObject.offers;
+    data.description = newObject.description;
+    data.photos = newObject.photos;
 
     trip.update(data);
     trip.render(TRIP_DAY_ITEMS);

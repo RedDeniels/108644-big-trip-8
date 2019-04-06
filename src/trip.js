@@ -1,6 +1,7 @@
 import Component from './component.js';
-import {dateTranfer, transfer} from './util.js';
+import {transfer} from './util.js';
 import {makeOffers} from './make-offers.js';
+import moment from '../node_modules/moment/moment.js';
 
 class Trip extends Component {
   constructor(data) {
@@ -23,15 +24,15 @@ class Trip extends Component {
   }
 
   startToField() {
-    return `${dateTranfer(this._timeStart).getHours()}:${dateTranfer(this._timeStart).getMinutes()}`;
+    return `${moment(this._timeStart).format(`HH`)}:${moment(this._timeStart).format(`mm`)}`;
   }
 
   finishToField() {
-    return `${dateTranfer(this._timeFinish).getHours()}:${dateTranfer(this._timeFinish).getMinutes()}`;
+    return `${moment(this._timeFinish).format(`HH`)}:${moment(this._timeFinish).format(`mm`)}`;
   }
 
   timeToTravel() {
-    return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
+    return `${moment(this._timeFinish).subtract(moment(this._timeStart).format(`HH`), `hours`).subtract(moment(this._timeStart).format(`mm`), `minutes`).format(`h[h] mm[m]`)}`;
   }
 
   _onBodyClick() {
@@ -50,6 +51,7 @@ class Trip extends Component {
   }
 
   update(data) {
+
     this._type = data.type;
     this._country = data.country;
     this._timeStart = data.timeStart;
@@ -59,12 +61,13 @@ class Trip extends Component {
 
     this._description = data.description;
     this._photos = data.photos;
+
   }
 
   get template() {
     return `<article class="trip-point">
-            <i class="trip-icon">${this._type[1]}</i>
-            <h3 class="trip-point__title">${this._type[0]} to ${this._country}</h3>
+            <i class="trip-icon">${Array.from(this._type.values())}</i>
+            <h3 class="trip-point__title">${Array.from(this._type.keys())} to ${this._country}</h3>
             <p class="trip-point__schedule">
               <span class="trip-point__timetable">${this.startToField()}&nbsp;&mdash; ${this.finishToField()}</span>
               <span class="trip-point__duration">${this.timeToTravel()}</span>

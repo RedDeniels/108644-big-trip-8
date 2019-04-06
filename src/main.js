@@ -5,7 +5,7 @@ import {randomCount} from './util.js';
 import {getPoint} from './data.js';
 
 const TRIP_FILTER = document.querySelector(`.trip-filter`);
-
+const TRIP_DAY_ITEMS = document.querySelector(`.trip-day__items`);
 const FILTER_TITLES = [
   `everything`,
   `future`,
@@ -13,7 +13,6 @@ const FILTER_TITLES = [
 ];
 const FILTER_CHECKED = FILTER_TITLES[0];
 const TRIP_POINT_COUNT_START = 7;
-const TRIP_DAY_ITEMS = document.querySelector(`.trip-day__items`);
 let trips = [];
 let tripsEdit = [];
 let tripData = [];

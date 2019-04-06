@@ -1,7 +1,9 @@
 import Component from './component.js';
-import {dateTranfer, transfer} from './util.js';
+import {transfer} from './util.js';
 import {makeOffers} from './make-offers.js';
 import {TYPES} from './data.js';
+import {createElement} from './create-element.js';
+import moment from '../node_modules/moment/moment.js';
 
 class TripEdit extends Component {
   constructor(data) {
@@ -19,11 +21,13 @@ class TripEdit extends Component {
     this._onDelete = null;
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onDeleteClick = this._onDeleteClick.bind(this);
-    this._state.isDate = false;
-    this._state.isType = false;
 
+    this._state.isDate = false;
     this._onChangeDate = this._onChangeDate.bind(this);
-    this._onChangeType = this._onChangeType.bind(this);
+    //  this._state.isType = false;
+    //  this._onChangeType = this._onChangeType.bind(this);
+
+    this._onTypeClick = this._onTypeClick.bind(this);
   }
 
   set onSubmit(fn) {
@@ -78,8 +82,9 @@ class TripEdit extends Component {
         target.type = new Map([[value, TYPES.get(value)]]);
       },
       time: (value) => {
-        target.timeStart = value;
-        target.timeFinish = value;
+        let commonTime = value.split(` — `);
+        target.timeStart = commonTime[0];
+        target.timeFinish = commonTime[1];
       },
       offer: (value) => target.offers.push(value),
 
@@ -94,6 +99,7 @@ class TripEdit extends Component {
   }
 
   _onChangeType() {
+
     this._state.isType = !this._state.isType;
     this.unbind();
     this._partialUpdate();
@@ -101,19 +107,19 @@ class TripEdit extends Component {
   }
 
   _partialUpdate() {
-    this._element.innerHTML = this.template;
+    this._element.innerHTML = createElement(this.template).children[0].outerHTML;
   }
 
   startToField() {
-    return `${dateTranfer(this._timeStart).getHours()}:${dateTranfer(this._timeStart).getMinutes()}`;
+    return `${moment(this._timeStart).format(`HH`)}:${moment(this._timeStart).format(`mm`)}`;
   }
 
   finishToField() {
-    return `${dateTranfer(this._timeFinish).getHours()}:${dateTranfer(this._timeFinish).getMinutes()}`;
+    return `${moment(this._timeFinish).format(`HH`)}:${moment(this._timeFinish).format(`mm`)}`;
   }
 
   timeToTravel() {
-    return `${dateTranfer(this._timeFinish).getHours() - dateTranfer(this._timeStart).getHours()}h ${dateTranfer(this._timeFinish).getMinutes() - dateTranfer(this._timeStart).getMinutes()}m`;
+    return `${moment(this._timeFinish).subtract(moment(this._timeStart).format(`HH`), `hours`).subtract(moment(this._timeStart).format(`mm`), `minutes`).format(`h[h] mm[m]`)}`;
   }
 
   set onSubmit(fn) {
@@ -138,15 +144,36 @@ class TripEdit extends Component {
     }
   }
 
+  _onTypeClick(evt) {
+    evt.preventDefault();
+    this._element.querySelector(`.travel-way__toggle`).checked = true;
+    let types = Array.from(this._element.querySelectorAll(`.travel-way__select-label`));
+    types.forEach((item) => {
+      item.addEventListener(`click`, this.onTypeToggleClick.bind(this));
+    });
+  }
+
+  onTypeToggleClick(evt) {
+    let type = evt.currentTarget.innerHTML.split(` `);
+    this._element.querySelector(`.travel-way__label`).innerHTML = type[0];
+    this._element.querySelector(`.point__destination-label`).innerHTML = type[1];
+    this._element.querySelector(`.travel-way__toggle`).checked = false;
+    let types = Array.from(this._element.querySelectorAll(`.travel-way__select-label`));
+    types.forEach((item) => {
+      item.removeEventListener(`click`, this.onTypeToggleClick.bind(this));
+    });
+  }
+
   bind() {
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteClick);
-
+    this._element.querySelector(`.travel-way__label`).addEventListener(`click`, this._onTypeClick);
   }
 
   unbind() {
     this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
     this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
+    this._element.querySelector(`.travel-way__label`).removeEventListener(`click`, this._onTypeClick);
   }
 
   update(data) {
@@ -170,7 +197,7 @@ class TripEdit extends Component {
       </label>
 
       <div class="travel-way">
-        <label class="travel-way__label" for="travel-way__toggle">${this._type[1]}</label>
+        <label class="travel-way__label" for="travel-way__toggle">${Array.from(this._type.values())}</label>
 
         <input type="checkbox" class="travel-way__toggle visually-hidden" id="travel-way__toggle">
 
@@ -200,7 +227,7 @@ class TripEdit extends Component {
       </div>
 
       <div class="point__destination-wrap">
-        <label class="point__destination-label" for="destination">${this._type[0]} to</label>
+        <label class="point__destination-label" for="destination">${Array.from(this._type.keys())} to</label>
         <input class="point__destination-input" list="destination-select" id="destination" value="${this._country}" name="destination">
         <datalist id="destination-select">
           <option value="airport"></option>

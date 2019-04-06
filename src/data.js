@@ -52,7 +52,7 @@ const getType = () => {
     }
     index++;
   }
-  return type;
+  return new Map([[type[0], type[1]]]);
 };
 
 const getDescription = () => {
