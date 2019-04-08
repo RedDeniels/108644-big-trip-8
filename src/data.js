@@ -11,16 +11,16 @@ const PRICE_MIN = 10;
 const PHOTO_MAX = 10;
 const PHOTO_MIN = 5;
 const TYPES = new Map([
-  [`Taxi`, `🚕`],
-  [`Bus`, `🚌`],
-  [`Train`, `🚂`],
-  [`Ship`, `🛳️`],
-  [`Transport`, `🚊`],
-  [`Drive`, `🚗`],
-  [`Flight`, `✈️`],
-  [`Check-in`, `🏨`],
-  [`Sightseeing`, `🏛️`],
-  [`Restaurant`, `🍴`],
+  [`taxi`, `🚕`],
+  [`bus`, `🚌`],
+  [`train`, `🚂`],
+  [`ship`, `🛳️`],
+  [`transport`, `🚊`],
+  [`drive`, `🚗`],
+  [`flight`, `✈️`],
+  [`check-in`, `🏨`],
+  [`sightseeing`, `🏛️`],
+  [`restaurant`, `🍴`],
 ]);
 const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -52,7 +52,7 @@ const getType = () => {
     }
     index++;
   }
-  return type;
+  return new Map([[type[0], type[1]]]);
 };
 
 const getDescription = () => {
@@ -101,4 +101,4 @@ const getPoint = () => ({
   photos: getPhotos(randomCount(PHOTO_MAX, PHOTO_MIN)),
 });
 
-export {getPoint, OFFER_PRICE_MAX, OFFER_PRICE_MIN};
+export {getPoint, OFFER_PRICE_MAX, OFFER_PRICE_MIN, TYPES};

@@ -1,5 +1,6 @@
 import makeFilter from './make-filter.js';
 import {Trip} from './trip.js';
+import {TripEdit} from './trip-edit.js';
 import {randomCount} from './util.js';
 import {getPoint} from './data.js';
 
@@ -13,6 +14,8 @@ const FILTER_TITLES = [
 const FILTER_CHECKED = FILTER_TITLES[0];
 const TRIP_POINT_COUNT_START = 7;
 let trips = [];
+let tripsEdit = [];
+let tripData = [];
 
 const checkedFilter = (fragment, filter) => {
   fragment.getElementById(`filter-${filter}`).checked = true;
@@ -55,6 +58,7 @@ const renderTripPoint = (points) => {
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < points.length; i++) {
     trips[i] = new Trip(points[i]);
+    tripsEdit[i] = new TripEdit(points[i]);
     trips[i].render(template);
     for (let j = 0; j < template.children.length;) {
       fragment.appendChild(template.children[j]);
@@ -64,13 +68,13 @@ const renderTripPoint = (points) => {
 };
 
 const makeTripPoints = (count) => {
-  let tripPoints = new Array(count);
-  for (let i = 0; i < tripPoints.length; i++) {
-    tripPoints[i] = getPoint();
+  tripData = new Array(count);
+  for (let i = 0; i < tripData.length; i++) {
+    tripData[i] = getPoint();
   }
-  renderTripPoint(tripPoints);
+  renderTripPoint(tripData);
 };
 
 makeTripPoints(TRIP_POINT_COUNT_START);
 
-export {TRIP_DAY_ITEMS};
+export {TRIP_DAY_ITEMS, tripData, trips, tripsEdit};

@@ -7,9 +7,11 @@ export default class Component {
     }
 
     this._element = null;
+    this._state = {};
   }
 
   render(container) {
+
     this._element = createElement(this.template);
     container.appendChild(this._element);
     this.bind();
@@ -32,5 +34,7 @@ export default class Component {
   unbind() {
     throw new Error(`You have define unbind.`);
   }
+
+  update() {}
 
 }
