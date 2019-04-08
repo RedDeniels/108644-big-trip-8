@@ -3,7 +3,8 @@ import {transfer} from './util.js';
 import {makeOffers} from './make-offers.js';
 import {TYPES} from './data.js';
 import {createElement} from './create-element.js';
-import moment from '../node_modules/moment/moment.js';
+import moment from 'moment';
+import flatpickr from 'flatpickr';
 
 class TripEdit extends Component {
   constructor(data) {
@@ -24,8 +25,6 @@ class TripEdit extends Component {
 
     this._state.isDate = false;
     this._onChangeDate = this._onChangeDate.bind(this);
-    //  this._state.isType = false;
-    //  this._onChangeType = this._onChangeType.bind(this);
 
     this._onTypeClick = this._onTypeClick.bind(this);
   }
@@ -60,6 +59,9 @@ class TripEdit extends Component {
     entry.description = this._element.querySelector(`.point__destination-text`).innerHTML;
     entry.type = new Map([[tripType.replace(` to`, ``), tripIcon]]);
 
+    entry.timeStart = this._timeStart;
+    entry.timeFinish = this._timeFinish;
+
     const tripEditMapper = TripEdit.createMapper(entry);
     for (const pair of formData.entries()) {
       const [property, value] = pair;
@@ -83,8 +85,11 @@ class TripEdit extends Component {
       },
       time: (value) => {
         let commonTime = value.split(` — `);
-        target.timeStart = commonTime[0];
-        target.timeFinish = commonTime[1];
+        if (value.length === 35) {
+          target.timeStart = moment(commonTime[0]).valueOf();
+          target.timeFinish = moment(commonTime[1]).valueOf();
+        }
+
       },
       offer: (value) => target.offers.push(value),
 
@@ -94,15 +99,6 @@ class TripEdit extends Component {
   _onChangeDate() {
     this._state.isDate = !this._state.isDate;
     this.unbind();
-    this._partialUpdate();
-    this.bind();
-  }
-
-  _onChangeType() {
-
-    this._state.isType = !this._state.isType;
-    this.unbind();
-    this._partialUpdate();
     this.bind();
   }
 
@@ -164,10 +160,28 @@ class TripEdit extends Component {
     });
   }
 
+  _onTimeChange(evt) {
+    evt.target.placeholder = `${moment(evt.target.value.split(` — `)[0]).format(`HH:mm`)} — ${moment(evt.target.value.split(` — `)[1]).format(`HH:mm`)}`;
+  }
+
   bind() {
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteClick);
     this._element.querySelector(`.travel-way__label`).addEventListener(`click`, this._onTypeClick);
+    this._element.querySelector(`.point__time`).addEventListener(`click`, this._onChangeDate);
+
+    if (this._state.isDate) {
+      this._element.querySelector(`.point__input--time`).addEventListener(`change`, this._onTimeChange);
+      flatpickr(`.point__input--time`, {
+        locale: {
+          rangeSeparator: ` — `
+        },
+        mode: `range`,
+        enableTime: true,
+        altInput: true,
+        altFormat: `H:i`
+      });
+    }
   }
 
   unbind() {
@@ -239,7 +253,7 @@ class TripEdit extends Component {
 
       <label class="point__time">
         choose time
-        <input class="point__input" type="text" value="${this.startToField()} — ${this.finishToField()}" name="time" placeholder="${this.startToField()} — ${this.finishToField()}">
+        <input class="point__input point__input--time" type="text" value="${this.startToField()} — ${this.finishToField()}" name="time" placeholder="${this.startToField()} — ${this.finishToField()}">
       </label>
 
       <label class="point__price">
