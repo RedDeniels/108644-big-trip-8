@@ -59,11 +59,31 @@ const renderTripPoint = (points) => {
   for (let i = 0; i < points.length; i++) {
     trips[i] = new Trip(points[i]);
     tripsEdit[i] = new TripEdit(points[i]);
+
+    tripsEdit[i].onDelete = (data, tripArray, tripEditArray, trip) => {
+      const index = tripEditArray.indexOf(trip);
+      TRIP_DAY_ITEMS.removeChild(trip._element);
+
+      console.log(trip);
+      console.log(tripArray);
+      console.log(data);
+
+      trip.unrender();
+      tripArray.splice(index, 1);
+      tripEditArray.splice(index, 1);
+      data.splice(index, 1);
+
+
+      console.log(tripArray);
+      console.log(data);
+    };
+
     trips[i].render(template);
     for (let j = 0; j < template.children.length;) {
       fragment.appendChild(template.children[j]);
     }
   }
+
   TRIP_DAY_ITEMS.appendChild(fragment);
 };
 

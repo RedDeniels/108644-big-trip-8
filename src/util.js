@@ -38,4 +38,4 @@ const transfer = (oldTrip) => {
 
 const dateTranfer = (number) => new Date(number);
 
-export {randomCount, dateTranfer, TRIP_DAY_ITEMS, transfer, trips, tripsEdit, tripData};
+export {randomCount, dateTranfer, transfer};
