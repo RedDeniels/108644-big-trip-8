@@ -1,10 +1,9 @@
 import Component from './component.js';
-import {makeOffers} from './make-offers.js';
-import {TYPES} from './data.js';
-import {createElement} from './create-element.js';
 import moment from 'moment';
+import {makeOffers} from './make-offers.js';
+import {createElement} from './create-element.js';
 import flatpickr from 'flatpickr';
-import {tripsEdit, tripData, trips} from './main.js';
+import {TYPES} from './data.js';
 
 class TripEdit extends Component {
   constructor(data) {
@@ -139,7 +138,7 @@ class TripEdit extends Component {
   _onDeleteClick(evt) {
     evt.preventDefault();
     if (typeof this._onDelete === `function`) {
-      this._onDelete(tripData, trips, tripsEdit, this);
+      this._onDelete(this);
     }
   }
 
@@ -165,6 +164,7 @@ class TripEdit extends Component {
 
   _onTimeChange(evt) {
     evt.target.placeholder = `${moment(evt.target.value.split(` — `)[0]).format(`HH:mm`)} — ${moment(evt.target.value.split(` — `)[1]).format(`HH:mm`)}`;
+    evt.target.removeEventListener(`change`, this._onTimeChange);
   }
 
   bind() {
@@ -263,7 +263,7 @@ class TripEdit extends Component {
       <label class="point__price">
         write price
         <span class="point__price-currency">€</span>
-        <input class="point__input" type="text" value="${this._price}" name="price">
+        <input class="point__input" type="number" value="${this._price}" name="price">
       </label>
 
       <div class="point__buttons">
