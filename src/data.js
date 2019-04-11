@@ -12,6 +12,15 @@ const TYPES = new Map([
   [`sightseeing`, `🏛️`],
   [`restaurant`, `🍴`],
 ]);
+const TYPES_TRANSPORT = new Map([
+  [`taxi`, `🚕`],
+  [`bus`, `🚌`],
+  [`train`, `🚂`],
+  [`ship`, `🛳️`],
+  [`transport`, `🚊`],
+  [`drive`, `🚗`],
+  [`flight`, `✈️`],
+]);
 const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -37,4 +46,4 @@ const FILTER_TITLES = [
   `past`
 ];
 
-export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, DESCRIPTIONS, OFFERS, FILTER_TITLES};
+export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES};

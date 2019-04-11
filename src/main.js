@@ -2,7 +2,8 @@ import {Trip} from './trip.js';
 import {TripEdit} from './trip-edit.js';
 import {Filter} from './filter.js';
 import {getPoint} from './point.js';
-import {TRIP_FILTER, TRIP_DAY_ITEMS, FILTER_TITLES} from './data.js';
+import {Statistic} from './statistic.js';
+import {TYPES_TRANSPORT, TRIP_FILTER, TRIP_DAY_ITEMS, FILTER_TITLES} from './data.js';
 
 const FILTER_CHECKED = FILTER_TITLES[0];
 const TRIP_POINT_COUNT_START = 7;
@@ -49,9 +50,7 @@ const renderFilters = (filtersTitle) => {
       renderTripPoint(tripsSortingData);
     };
   });
-  //  checkedFilter(fragment, FILTER_CHECKED);
   TRIP_FILTER.appendChild(fragment);
-  //  switchFilter();
 };
 
 renderFilters(FILTER_TITLES);
@@ -107,7 +106,6 @@ const renderTripPoint = (points) => {
 
   TRIP_DAY_ITEMS.appendChild(fragment);
 };
-
 const makeTripPoints = (count) => {
   tripsData = new Array(count);
   for (let i = 0; i < tripsData.length; i++) {
@@ -115,5 +113,60 @@ const makeTripPoints = (count) => {
   }
   renderTripPoint(tripsData);
 };
-
 makeTripPoints(TRIP_POINT_COUNT_START);
+
+const onTableClick = (evt) => {
+  evt.preventDefault();
+  document.querySelector(`.view-switch__item--table`).classList.add(`view-switch__item--active`);
+  document.querySelector(`.statistic`).classList.add(`visually-hidden`);
+  document.querySelector(`.view-switch__item--statistic`).classList.remove(`view-switch__item--active`);
+  document.querySelector(`.main`).classList.remove(`visually-hidden`);
+  document.querySelector(`.view-switch__item--table`).removeEventListener(`click`, onTableClick);
+  document.querySelector(`.view-switch__item--statistic`).addEventListener(`click`, onStatisticClick);
+};
+
+const onStatisticClick = (evt) => {
+  let moneyTypes = [];
+  let moneyPrices = [];
+  let transportTypes = [];
+  let transportCounts = [];
+  let transportStatistic = new Map([]);
+  let transportTypesFilter = [];
+
+  evt.preventDefault();
+  document.querySelector(`.view-switch__item--statistic`).classList.add(`view-switch__item--active`);
+  document.querySelector(`.main`).classList.add(`visually-hidden`);
+  document.querySelector(`.view-switch__item--table`).classList.remove(`view-switch__item--active`);
+  document.querySelector(`.statistic`).classList.remove(`visually-hidden`);
+  document.querySelector(`.view-switch__item--table`).addEventListener(`click`, onTableClick);
+
+  Array.from(TYPES_TRANSPORT).forEach(function (item) {
+    transportTypesFilter.push(`${item[1]} ${item[0]}`.toUpperCase());
+  });
+  tripsData.forEach(function (item) {
+    let type = `${Array.from(item.type)[0][1]} ${Array.from(item.type)[0][0]}`.toUpperCase();
+    moneyTypes.push(type);
+    moneyPrices.push(item.price);
+    if (transportStatistic.has(type) && transportTypesFilter.find((it) => it === type)) {
+      transportStatistic.set(type, transportStatistic.get(type) + 1);
+    } else if (transportTypesFilter.find((it) => it === type)) {
+      transportStatistic.set(type, 1);
+    }
+  });
+  Array.from(transportStatistic).forEach(function (item) {
+    transportTypes.push(item[0]);
+    transportCounts.push(item[1]);
+  });
+  const moneyData = {
+    types: moneyTypes,
+    prices: moneyPrices,
+  };
+  const transportData = {
+    types: transportTypes,
+    counts: transportCounts,
+  };
+
+  return new Statistic(moneyData, transportData);
+};
+
+document.querySelector(`.view-switch__item--statistic`).addEventListener(`click`, onStatisticClick);
