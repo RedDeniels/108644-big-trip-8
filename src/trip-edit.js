@@ -1,10 +1,9 @@
 import Component from './component.js';
-import {transfer} from './util.js';
-import {makeOffers} from './make-offers.js';
-import {TYPES} from './data.js';
-import {createElement} from './create-element.js';
 import moment from 'moment';
+import {makeOffers} from './make-offers.js';
+import {createElement} from './create-element.js';
 import flatpickr from 'flatpickr';
+import {TYPES} from './data.js';
 
 class TripEdit extends Component {
   constructor(data) {
@@ -122,6 +121,10 @@ class TripEdit extends Component {
     this._onSubmit = fn;
   }
 
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
+
   _onSubmitClick(evt) {
     evt.preventDefault();
     const formData = new FormData(this._element.querySelector(`.point__form`));
@@ -134,9 +137,8 @@ class TripEdit extends Component {
 
   _onDeleteClick(evt) {
     evt.preventDefault();
-    transfer(this);
     if (typeof this._onDelete === `function`) {
-      this._onDelete();
+      this._onDelete(this);
     }
   }
 
@@ -145,28 +147,29 @@ class TripEdit extends Component {
     this._element.querySelector(`.travel-way__toggle`).checked = true;
     let types = Array.from(this._element.querySelectorAll(`.travel-way__select-label`));
     types.forEach((item) => {
-      item.addEventListener(`click`, this.onTypeToggleClick.bind(this));
+      item.addEventListener(`click`, this._onTypeToggleClick.bind(this));
     });
   }
 
-  onTypeToggleClick(evt) {
+  _onTypeToggleClick(evt) {
     let type = evt.currentTarget.innerHTML.split(` `);
     this._element.querySelector(`.travel-way__label`).innerHTML = type[0];
     this._element.querySelector(`.point__destination-label`).innerHTML = type[1];
     this._element.querySelector(`.travel-way__toggle`).checked = false;
     let types = Array.from(this._element.querySelectorAll(`.travel-way__select-label`));
     types.forEach((item) => {
-      item.removeEventListener(`click`, this.onTypeToggleClick.bind(this));
+      item.removeEventListener(`click`, this._onTypeToggleClick.bind(this));
     });
   }
 
   _onTimeChange(evt) {
     evt.target.placeholder = `${moment(evt.target.value.split(` — `)[0]).format(`HH:mm`)} — ${moment(evt.target.value.split(` — `)[1]).format(`HH:mm`)}`;
+    evt.target.removeEventListener(`change`, this._onTimeChange);
   }
 
   bind() {
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitClick);
-    this._element.querySelector(`form`).addEventListener(`reset`, this._onDeleteClick);
+    this._element.querySelector(`.point__button--delete`).addEventListener(`click`, this._onDeleteClick);
     this._element.querySelector(`.travel-way__label`).addEventListener(`click`, this._onTypeClick);
     this._element.querySelector(`.point__time`).addEventListener(`click`, this._onChangeDate);
 
@@ -185,9 +188,10 @@ class TripEdit extends Component {
   }
 
   unbind() {
-    this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
-    this._element.querySelector(`form`).removeEventListener(`click`, this._onBodyClick);
+    this._element.querySelector(`form`).removeEventListener(`click`, this.onSubmitClick);
+    this._element.querySelector(`.point__button--delete`).removeEventListener(`click`, this._onDeleteClick);
     this._element.querySelector(`.travel-way__label`).removeEventListener(`click`, this._onTypeClick);
+    this._element.querySelector(`.point__time`).removeEventListener(`click`, this._onChangeDate);
   }
 
   update(data) {
@@ -259,12 +263,12 @@ class TripEdit extends Component {
       <label class="point__price">
         write price
         <span class="point__price-currency">€</span>
-        <input class="point__input" type="text" value="${this._price}" name="price">
+        <input class="point__input" type="number" value="${this._price}" name="price">
       </label>
 
       <div class="point__buttons">
         <button class="point__button point__button--save" type="submit">Save</button>
-        <button class="point__button" type="reset">Delete</button>
+        <button class="point__button point__button--delete" type="reset">Delete</button>
       </div>
 
       <div class="paint__favorite-wrap">

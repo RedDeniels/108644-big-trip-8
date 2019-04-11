@@ -1,5 +1,4 @@
 import Component from './component.js';
-import {transfer} from './util.js';
 import {makeOffers} from './make-offers.js';
 import moment from '../node_modules/moment/moment.js';
 
@@ -16,11 +15,16 @@ class Trip extends Component {
     this._photos = data.photos;
 
     this._onEdit = null;
+    this._transfer = null;
     this._onBodyClick = this._onBodyClick.bind(this);
   }
 
   set onEdit(fn) {
     this._onEdit = fn;
+  }
+
+  set transfer(fn) {
+    this._transfer = fn;
   }
 
   startToField() {
@@ -36,7 +40,9 @@ class Trip extends Component {
   }
 
   _onBodyClick() {
-    transfer(this);
+    if (typeof this._transfer === `function`) {
+      this._transfer(this);
+    }
     if (typeof this._onEdit === `function`) {
       this._onEdit();
     }

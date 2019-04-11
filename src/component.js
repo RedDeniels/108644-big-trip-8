@@ -11,7 +11,6 @@ export default class Component {
   }
 
   render(container) {
-
     this._element = createElement(this.template);
     container.appendChild(this._element);
     this.bind();
