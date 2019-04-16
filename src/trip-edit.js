@@ -22,8 +22,10 @@ class TripEdit extends Component {
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onDeleteClick = this._onDeleteClick.bind(this);
 
-    this._state.isDate = false;
-    this._onChangeDate = this._onChangeDate.bind(this);
+    this._state.isStartDate = false;
+    this._onChangeStartDate = this._onChangeStartDate.bind(this);
+    this._state.isFinishDate = false;
+    this._onChangeFinishDate = this._onChangeFinishDate.bind(this);
 
     this._onTypeClick = this._onTypeClick.bind(this);
   }
@@ -68,6 +70,7 @@ class TripEdit extends Component {
         tripEditMapper[property](value);
       }
     }
+    console.log(entry);
     return entry;
   }
 
@@ -82,21 +85,25 @@ class TripEdit extends Component {
       travelWay: (value) => {
         target.type = new Map([[value, TYPES.get(value)]]);
       },
-      time: (value) => {
-        let commonTime = value.split(` — `);
-        if (value.length === 35) {
-          target.timeStart = moment(commonTime[0]).valueOf();
-          target.timeFinish = moment(commonTime[1]).valueOf();
-        }
-
+      dateStart: (value) => {
+        target.timeStart = moment(value).valueOf();
+      },
+      dateEnd: (value) => {
+        target.timeFinish = moment(value).valueOf();
       },
       offer: (value) => target.offers.push(value),
 
     };
   }
 
-  _onChangeDate() {
-    this._state.isDate = !this._state.isDate;
+  _onChangeStartDate() {
+    this._state.isStartDate = !this._state.isStartDate;
+    this.unbind();
+    this.bind();
+  }
+
+  _onChangeFinishDate() {
+    this._state.isFinishDate = !this._state.isFinishDate;
     this.unbind();
     this.bind();
   }
@@ -162,24 +169,28 @@ class TripEdit extends Component {
     });
   }
 
-  _onTimeChange(evt) {
-    evt.target.placeholder = `${moment(evt.target.value.split(` — `)[0]).format(`HH:mm`)} — ${moment(evt.target.value.split(` — `)[1]).format(`HH:mm`)}`;
-    evt.target.removeEventListener(`change`, this._onTimeChange);
-  }
-
   bind() {
     this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitClick);
     this._element.querySelector(`.point__button--delete`).addEventListener(`click`, this._onDeleteClick);
     this._element.querySelector(`.travel-way__label`).addEventListener(`click`, this._onTypeClick);
-    this._element.querySelector(`.point__time`).addEventListener(`click`, this._onChangeDate);
+    this._element.querySelector(`.point__input--time-start`).addEventListener(`click`, this._onChangeStartDate);
+    this._element.querySelector(`.point__input--time-start`).addEventListener(`click`, this._onChangeFinishDate);
 
-    if (this._state.isDate) {
-      this._element.querySelector(`.point__input--time`).addEventListener(`change`, this._onTimeChange);
-      flatpickr(`.point__input--time`, {
+    if (this._state.isStartDate) {
+      flatpickr(`.point__input--time-start`, {
         locale: {
           rangeSeparator: ` — `
         },
-        mode: `range`,
+        enableTime: true,
+        altInput: true,
+        altFormat: `H:i`
+      });
+    }
+    if (this._state.isFinishDate) {
+      flatpickr(`.point__input--time-finish`, {
+        locale: {
+          rangeSeparator: ` — `
+        },
         enableTime: true,
         altInput: true,
         altFormat: `H:i`
@@ -257,7 +268,8 @@ class TripEdit extends Component {
 
       <label class="point__time">
         choose time
-        <input class="point__input point__input--time" type="text" value="${this.startToField()} — ${this.finishToField()}" name="time" placeholder="${this.startToField()} — ${this.finishToField()}">
+        <input class="point__input point__input--time-start" type="text" value="${this.startToField()}" name="dateStart" placeholder="${this.startToField()}">
+        <input class="point__input point__input--time-finish" type="text" value="${this.finishToField()}" name="dateEnd" placeholder="${this.finishToField()}">
       </label>
 
       <label class="point__price">
