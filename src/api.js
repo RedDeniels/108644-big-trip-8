@@ -1,5 +1,6 @@
 import {ModelTrip} from './model-trip.js';
 import {ModelDestination} from './model-destination.js';
+import {ModelOffer} from './model-offer.js';
 
 const Method = {
   GET: `GET`,
@@ -36,6 +37,12 @@ const API = class {
     return this._load({url: `/destinations`})
       .then(toJSON)
       .then(ModelDestination.parseDestinations);
+  }
+
+  getOffers() {
+    return this._load({url: `/offers`})
+      .then(toJSON)
+      .then(ModelOffer.parseOffers);
   }
 
   createTrip({trip}) {

@@ -4,7 +4,7 @@ import flatpickr from 'flatpickr';
 import {makeOffers} from './make-offers.js';
 import {createElement} from './create-element.js';
 import {makeDestinations} from './make-destinations.js';
-import {TYPES, TYPES_TRANSPORT} from './data.js';
+import {TYPES, TYPES_TRANSPORT, offers} from './data.js';
 
 class TripEdit extends Component {
   constructor(data) {
@@ -22,6 +22,7 @@ class TripEdit extends Component {
     this._onSubmit = null;
     this._onDelete = null;
     this._onCountry = null;
+
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onDeleteClick = this._onDeleteClick.bind(this);
     this._onCountryChange = this._onCountryChange.bind(this);
@@ -170,15 +171,30 @@ class TripEdit extends Component {
     });
   }
 
+  _changeType(type) {
+    console.log(this._offers);
+    this._type = new Map([[type[1], type[0]]]);
+    for (let value of offers) {
+      if (value.type === type[1]) {
+        this._offers = value.offers.slice();
+      }
+    }
+    console.log(this._offers);
+  }
+
   _onTypeToggleClick(evt) {
     let type = evt.currentTarget.innerHTML.split(` `);
     this._element.querySelector(`.travel-way__label`).innerHTML = type[0];
     this._element.querySelector(`.point__destination-label`).innerHTML = type[1];
     this._element.querySelector(`.travel-way__toggle`).checked = false;
     let types = Array.from(this._element.querySelectorAll(`.travel-way__select-label`));
+    this._changeType(type);
     types.forEach((item) => {
       item.removeEventListener(`click`, this._onTypeToggleClick.bind(this));
     });
+    this._partialUpdate();
+    this.unbind();
+    this.bind();
   }
 
   bind() {

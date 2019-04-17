@@ -51,9 +51,14 @@ const AUTHORIZATION = `Basic 5G1tGut3P1nP0n6`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let destinations = [];
+let offers = [];
+api.getOffers()
+  .then((data) => {
+    offers = data;
+  });
 api.getDestinations()
   .then((data) => {
     destinations = data;
   });
 
-export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES, api, destinations};
+export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES, api, destinations, offers};
