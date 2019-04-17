@@ -1,12 +1,10 @@
 import {Trip} from './trip.js';
 import {TripEdit} from './trip-edit.js';
 import {Filter} from './filter.js';
-import {getPoint} from './point.js';
 import {Statistic} from './statistic.js';
-import {TYPES_TRANSPORT, TRIP_FILTER, TRIP_DAY_ITEMS, FILTER_TITLES} from './data.js';
+import {TYPES_TRANSPORT, TRIP_FILTER, TRIP_DAY_ITEMS, FILTER_TITLES, api, destinations} from './data.js';
 
 const FILTER_CHECKED = FILTER_TITLES[0];
-const TRIP_POINT_COUNT_START = 7;
 let filters = [];
 let trips = [];
 let tripsEdit = [];
@@ -62,22 +60,13 @@ const renderTripPoint = (points) => {
     trips[i] = new Trip(points[i]);
     tripsEdit[i] = new TripEdit(points[i]);
 
-    tripsEdit[i].onDelete = (trip) => {
-      const index = tripsEdit.indexOf(trip);
-      TRIP_DAY_ITEMS.removeChild(trip._element);
-      trip.unrender();
-      trips.splice(index, 1);
-      tripsEdit.splice(index, 1);
-      tripsData.splice(index, 1);
-    };
-
     trips[i].transfer = (oldTrip) => {
       let newTrip = tripsEdit[trips.indexOf(oldTrip)];
       newTrip.render(TRIP_DAY_ITEMS);
       TRIP_DAY_ITEMS.replaceChild(tripsEdit[trips.indexOf(oldTrip)]._element, oldTrip._element);
       oldTrip.unrender();
 
-      newTrip._onSubmit = (newObject) => {
+      newTrip.onSubmit = (newObject) => {
         let trip = trips[tripsEdit.indexOf(newTrip)];
         let data = tripsData[tripsEdit.indexOf(newTrip)];
 
@@ -96,6 +85,26 @@ const renderTripPoint = (points) => {
         newTrip.unrender();
         newTrip = new TripEdit(data);
       };
+
+      tripsEdit[i].onDelete = (trip) => {
+        const index = tripsEdit.indexOf(trip);
+        TRIP_DAY_ITEMS.removeChild(trip._element);
+        trip.unrender();
+        trips.splice(index, 1);
+        tripsEdit.splice(index, 1);
+        tripsData.splice(index, 1);
+      };
+
+      tripsEdit[i].onCountry = () => {
+        let newCountry = tripsEdit[i]._element.querySelector(`.point__destination-input`).value;
+        Array.from(destinations).forEach(function (value) {
+          if (value.country === newCountry) {
+            tripsEdit[i]._country = value.country;
+            tripsEdit[i]._description = value.description;
+            tripsEdit[i]._photos = value.photos.slice();
+          }
+        });
+      };
     };
 
     trips[i].render(template);
@@ -106,14 +115,12 @@ const renderTripPoint = (points) => {
 
   TRIP_DAY_ITEMS.appendChild(fragment);
 };
-const makeTripPoints = (count) => {
-  tripsData = new Array(count);
-  for (let i = 0; i < tripsData.length; i++) {
-    tripsData[i] = getPoint();
-  }
-  renderTripPoint(tripsData);
-};
-makeTripPoints(TRIP_POINT_COUNT_START);
+
+api.getTrips()
+  .then((data) => {
+    tripsData = data;
+    renderTripPoint(tripsData);
+  });
 
 const onTableClick = (evt) => {
   evt.preventDefault();

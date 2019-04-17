@@ -1,3 +1,5 @@
+import {API} from './api.js';
+
 const TRIP_FILTER = document.querySelector(`.trip-filter`);
 const TRIP_DAY_ITEMS = document.querySelector(`.trip-day__items`);
 const TYPES = new Map([
@@ -45,5 +47,13 @@ const FILTER_TITLES = [
   `future`,
   `past`
 ];
+const AUTHORIZATION = `Basic 5G1tGut3P1nP0n6`;
+const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+let destinations = [];
+api.getDestinations()
+  .then((data) => {
+    destinations = data;
+  });
 
-export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES};
+export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES, api, destinations};

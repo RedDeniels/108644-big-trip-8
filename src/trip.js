@@ -5,6 +5,7 @@ import moment from '../node_modules/moment/moment.js';
 class Trip extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._type = data.type;
     this._country = data.country;
     this._timeStart = data.timeStart;

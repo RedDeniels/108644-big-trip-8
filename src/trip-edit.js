@@ -1,13 +1,15 @@
 import Component from './component.js';
 import moment from 'moment';
+import flatpickr from 'flatpickr';
 import {makeOffers} from './make-offers.js';
 import {createElement} from './create-element.js';
-import flatpickr from 'flatpickr';
-import {TYPES} from './data.js';
+import {makeDestinations} from './make-destinations.js';
+import {TYPES, TYPES_TRANSPORT} from './data.js';
 
 class TripEdit extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._type = data.type;
     this._country = data.country;
     this._timeStart = data.timeStart;
@@ -19,8 +21,10 @@ class TripEdit extends Component {
 
     this._onSubmit = null;
     this._onDelete = null;
+    this._onCountry = null;
     this._onSubmitClick = this._onSubmitClick.bind(this);
     this._onDeleteClick = this._onDeleteClick.bind(this);
+    this._onCountryChange = this._onCountryChange.bind(this);
 
     this._state.isStartDate = false;
     this._onChangeStartDate = this._onChangeStartDate.bind(this);
@@ -28,10 +32,6 @@ class TripEdit extends Component {
     this._onChangeFinishDate = this._onChangeFinishDate.bind(this);
 
     this._onTypeClick = this._onTypeClick.bind(this);
-  }
-
-  set onSubmit(fn) {
-    this._onSubmit = fn;
   }
 
   _processForm(formData) {
@@ -70,7 +70,6 @@ class TripEdit extends Component {
         tripEditMapper[property](value);
       }
     }
-    console.log(entry);
     return entry;
   }
 
@@ -132,6 +131,19 @@ class TripEdit extends Component {
     this._onDelete = fn;
   }
 
+  set onCountry(fn) {
+    this._onCountry = fn;
+  }
+
+  _onCountryChange() {
+    if (typeof this._onCountry === `function`) {
+      this._onCountry();
+    }
+    this._partialUpdate();
+    this.unbind();
+    this.bind();
+  }
+
   _onSubmitClick(evt) {
     evt.preventDefault();
     const formData = new FormData(this._element.querySelector(`.point__form`));
@@ -175,6 +187,7 @@ class TripEdit extends Component {
     this._element.querySelector(`.travel-way__label`).addEventListener(`click`, this._onTypeClick);
     this._element.querySelector(`.point__input--time-start`).addEventListener(`click`, this._onChangeStartDate);
     this._element.querySelector(`.point__input--time-start`).addEventListener(`click`, this._onChangeFinishDate);
+    this._element.querySelector(`.point__destination-input`).addEventListener(`change`, this._onCountryChange);
 
     if (this._state.isStartDate) {
       flatpickr(`.point__input--time-start`, {
@@ -256,13 +269,10 @@ class TripEdit extends Component {
       </div>
 
       <div class="point__destination-wrap">
-        <label class="point__destination-label" for="destination">${Array.from(this._type.keys())} to</label>
+        <label class="point__destination-label" for="destination">${Array.from(this._type.keys())}${TYPES_TRANSPORT.get(Array.from(this._type.keys())[0]) ? ` to` : ``}</label>
         <input class="point__destination-input" list="destination-select" id="destination" value="${this._country}" name="destination">
         <datalist id="destination-select">
-          <option value="airport"></option>
-          <option value="Geneva"></option>
-          <option value="Chamonix"></option>
-          <option value="hotel"></option>
+          ${makeDestinations()}
         </datalist>
       </div>
 
@@ -302,7 +312,7 @@ class TripEdit extends Component {
         <h3 class="point__details-title">Destination</h3>
         <p class="point__destination-text">${this._description}</p>
         <div class="point__destination-images">
-          ${(Array.from(this._photos).map((photo) => (`<img src="${photo}" alt="picture from place" class="point__destination-image">`.trim()))).join(``)}
+          ${(Array.from(this._photos).map((photo) => (`<img src="${photo.src}" alt="${photo.description}" class="point__destination-image">`.trim()))).join(``)}
         </div>
       </section>
       <input type="hidden" class="point__total-price" name="total-price" value="">
