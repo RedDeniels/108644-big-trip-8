@@ -56,6 +56,7 @@ renderFilters(FILTER_TITLES);
 const renderTripPoint = (points) => {
   let template = document.createElement(`template`);
   let fragment = document.createDocumentFragment();
+  TRIP_DAY_ITEMS.innerHTML = ``;
   for (let i = 0; i < points.length; i++) {
     trips[i] = new Trip(points[i]);
     tripsEdit[i] = new TripEdit(points[i]);
@@ -86,13 +87,11 @@ const renderTripPoint = (points) => {
         newTrip = new TripEdit(data);
       };
 
-      tripsEdit[i].onDelete = (trip) => {
-        const index = tripsEdit.indexOf(trip);
-        TRIP_DAY_ITEMS.removeChild(trip._element);
-        trip.unrender();
-        trips.splice(index, 1);
-        tripsEdit.splice(index, 1);
-        tripsData.splice(index, 1);
+      tripsEdit[i].onDelete = () => {
+        api.deleteTrip({id: tripsEdit[i]._id})
+        .then(() => api.getTrips())
+        .then(renderTripPoint)
+        .catch(alert);
       };
 
       tripsEdit[i].onCountry = () => {
