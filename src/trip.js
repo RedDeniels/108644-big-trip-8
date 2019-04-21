@@ -57,18 +57,32 @@ class Trip extends Component {
     this._element.removeEventListener(`click`, this._onBodyClick);
   }
 
-  update(data) {
+  update(newObject) {
+    this._id = newObject.id;
+    this._type = newObject.type;
+    this._country = newObject.country;
+    this._timeStart = newObject.timeStart;
+    this._timeFinish = newObject.timeFinish;
+    this._price = newObject.price;
+    this._offers = newObject.offers;
+    this._description = newObject.description;
+    this._photos = newObject.photos;
+  }
 
-    this._type = data.type;
-    this._country = data.country;
-    this._timeStart = data.timeStart;
-    this._timeFinish = data.timeFinish;
-    this._price = data.price;
-    this._offers = data.offers;
-
-    this._description = data.description;
-    this._photos = data.photos;
-
+  toRAW() {
+    return {
+      'base_price': this._price,
+      'date_from': this._timeStart,
+      'date_to': this._timeFinish,
+      'destination': {
+        'description': this._description,
+        'name': this._country,
+        'pictures': this._photos,
+      },
+      'id': this._id,
+      'offers': this._offers,
+      'type': this._type.keys()[0],
+    };
   }
 
   get template() {

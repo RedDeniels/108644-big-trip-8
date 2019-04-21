@@ -1,8 +1,9 @@
 import {Trip} from './trip.js';
 import {TripEdit} from './trip-edit.js';
+import {ModelTrip} from './model-trip.js';
 import {Filter} from './filter.js';
 import {Statistic} from './statistic.js';
-import {TYPES_TRANSPORT, TRIP_FILTER, TRIP_DAY_ITEMS, FILTER_TITLES, api, destinations} from './data.js';
+import {TYPES_TRANSPORT, TRIP_FILTER, TRIP_DAY_ITEMS, FILTER_TITLES, MESSAGE_LOAD, MESSAGE_LOAD_ERR, BUTTON_LOAD_TEXT, BUTTON_LOAD_TEXT_BLOCK, api, destinations} from './data.js';
 
 const FILTER_CHECKED = FILTER_TITLES[0];
 let filters = [];
@@ -10,6 +11,11 @@ let trips = [];
 let tripsEdit = [];
 let tripsData = [];
 let tripsSortingData = [];
+
+const renderLoadMessage = () => {
+  TRIP_DAY_ITEMS.innerHTML = MESSAGE_LOAD;
+};
+renderLoadMessage();
 
 const checkedFilter = (filter) => {
   if (filter._title === FILTER_CHECKED) {
@@ -48,6 +54,7 @@ const renderFilters = (filtersTitle) => {
       renderTripPoint(tripsSortingData);
     };
   });
+
   TRIP_FILTER.appendChild(fragment);
 };
 
@@ -69,22 +76,39 @@ const renderTripPoint = (points) => {
 
       newTrip.onSubmit = (newObject) => {
         let trip = trips[tripsEdit.indexOf(newTrip)];
-        let data = tripsData[tripsEdit.indexOf(newTrip)];
+        trip.update(newObject);
 
-        data.type = newObject.type;
-        data.country = newObject.country;
-        data.timeStart = newObject.timeStart;
-        data.timeFinish = newObject.timeFinish;
-        data.price = newObject.price;
-        data.offers = newObject.offers;
-        data.description = newObject.description;
-        data.photos = newObject.photos;
-
-        trip.update(data);
+        const block = () => {
+          newTrip._element.querySelector(`.point__button--save`).disabled = true;
+          newTrip._element.querySelector(`.point__button--delete`).disabled = true;
+        };
+        const unblock = () => {
+          newTrip._element.querySelector(`.point__button--save`).disabled = false;
+          newTrip._element.querySelector(`.point__button--delete`).disabled = false;
+        };
+        const buttonLoadBlock = () => {
+          newTrip._element.querySelector(`.point__button--save`).innerHTML = BUTTON_LOAD_TEXT_BLOCK;
+        };
+        const buttonLoadUnblock = () => {
+          newTrip._element.querySelector(`.point__button--save`).innerHTML = BUTTON_LOAD_TEXT;
+        };
+        buttonLoadBlock();
+        block();
+        api.updateTrip({id: trip._id, data: trip.toRAW()})
+          .then((data) => {
+            let tripData = new ModelTrip(data);
+            unblock();
+            trip.update(tripData);
+          })
+          .catch(() => {
+            newTrip._element.style.border = `2`;
+            newTrip._element.style.borderColor = `red`;
+            newTrip.shake();
+            buttonLoadUnblock();
+          });
         trip.render(TRIP_DAY_ITEMS);
         TRIP_DAY_ITEMS.replaceChild(trip._element, newTrip._element);
         newTrip.unrender();
-        newTrip = new TripEdit(data);
       };
 
       tripsEdit[i].onDelete = () => {
@@ -111,7 +135,6 @@ const renderTripPoint = (points) => {
       fragment.appendChild(template.children[j]);
     }
   }
-
   TRIP_DAY_ITEMS.appendChild(fragment);
 };
 
@@ -119,6 +142,9 @@ api.getTrips()
   .then((data) => {
     tripsData = data;
     renderTripPoint(tripsData);
+  })
+  .catch(() => {
+    TRIP_DAY_ITEMS.innerHTML = MESSAGE_LOAD_ERR;
   });
 
 const onTableClick = (evt) => {

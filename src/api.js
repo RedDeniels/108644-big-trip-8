@@ -75,7 +75,9 @@ const API = class {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
+        /* eslint-disable */
         console.error(`fetch error: ${err}`);
+        /* eslint-enable */
         throw err;
       });
   }

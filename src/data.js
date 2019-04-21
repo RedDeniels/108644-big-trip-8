@@ -47,7 +47,11 @@ const FILTER_TITLES = [
   `future`,
   `past`
 ];
-const AUTHORIZATION = `Basic 5G1tGut3P1nP0n6`;
+const MESSAGE_LOAD = `Loading route...`;
+const MESSAGE_LOAD_ERR = `Something went wrong while loading your route info. Check your connection or try again later`;
+const BUTTON_LOAD_TEXT = `Save`;
+const BUTTON_LOAD_TEXT_BLOCK = `Saving...`;
+const AUTHORIZATION = `Basic 5G1tlrydf1nP0n6=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 let destinations = [];
@@ -61,4 +65,4 @@ api.getDestinations()
     destinations = data;
   });
 
-export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES, api, destinations, offers};
+export {TRIP_FILTER, TRIP_DAY_ITEMS, TYPES, TYPES_TRANSPORT, DESCRIPTIONS, OFFERS, FILTER_TITLES, MESSAGE_LOAD, MESSAGE_LOAD_ERR, BUTTON_LOAD_TEXT, BUTTON_LOAD_TEXT_BLOCK, api, destinations, offers};

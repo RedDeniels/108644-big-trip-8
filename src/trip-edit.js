@@ -37,6 +37,7 @@ class TripEdit extends Component {
 
   _processForm(formData) {
     const entry = {
+      id: 0,
       type: [],
       country: ``,
       timeStart: 0,
@@ -49,20 +50,25 @@ class TripEdit extends Component {
     const tripType = this._element.querySelector(`.point__destination-label`).innerHTML;
     const tripIcon = this._element.querySelector(`.travel-way__label`).innerHTML;
     const tripPhotos = Array.from(this._element.querySelectorAll(`.point__destination-image`));
-    const tripOffers = Array.from(this._element.querySelectorAll(`.point__offers-label`));
+    const tripOffers = Array.from(this._element.querySelectorAll(`.point__offers-item`));
     for (let value of tripOffers) {
-      const service = value.querySelector(`.point__offer-service`);
-      const price = value.querySelector(`.point__offer-price`);
-      entry.offers.push(`${service.innerHTML} ${price.innerHTML}`);
+      entry.offers.push({
+        title: value.querySelector(`.point__offer-service`).innerHTML,
+        price: value.querySelector(`.point__offer-price`).innerHTML,
+        accepted: value.querySelector(`.point__offers-input`).checked
+      });
+
     }
     for (let value of tripPhotos) {
-      entry.photos.push(value.getAttribute(`src`));
+      entry.photos.push({
+        src: value.getAttribute(`src`),
+        description: value.getAttribute(`alt`),
+      });
     }
     entry.description = this._element.querySelector(`.point__destination-text`).innerHTML;
     entry.type = new Map([[tripType.replace(` to`, ``), tripIcon]]);
 
-    entry.timeStart = this._timeStart;
-    entry.timeFinish = this._timeFinish;
+    entry.id = this._id;
 
     const tripEditMapper = TripEdit.createMapper(entry);
     for (const pair of formData.entries()) {
@@ -70,6 +76,12 @@ class TripEdit extends Component {
       if (tripEditMapper[property]) {
         tripEditMapper[property](value);
       }
+    }
+    if (isNaN(entry.timeStart)) {
+      entry.timeStart = this._timeStart;
+    }
+    if (isNaN(entry.timeFinish)) {
+      entry.timeFinish = this._timeFinish;
     }
     return entry;
   }
@@ -91,8 +103,6 @@ class TripEdit extends Component {
       dateEnd: (value) => {
         target.timeFinish = moment(value).valueOf();
       },
-      offer: (value) => target.offers.push(value),
-
     };
   }
 
@@ -172,14 +182,12 @@ class TripEdit extends Component {
   }
 
   _changeType(type) {
-    console.log(this._offers);
     this._type = new Map([[type[1], type[0]]]);
     for (let value of offers) {
       if (value.type === type[1]) {
         this._offers = value.offers.slice();
       }
     }
-    console.log(this._offers);
   }
 
   _onTypeToggleClick(evt) {
@@ -202,9 +210,8 @@ class TripEdit extends Component {
     this._element.querySelector(`.point__button--delete`).addEventListener(`click`, this._onDeleteClick);
     this._element.querySelector(`.travel-way__label`).addEventListener(`click`, this._onTypeClick);
     this._element.querySelector(`.point__input--time-start`).addEventListener(`click`, this._onChangeStartDate);
-    this._element.querySelector(`.point__input--time-start`).addEventListener(`click`, this._onChangeFinishDate);
+    this._element.querySelector(`.point__input--time-finish`).addEventListener(`click`, this._onChangeFinishDate);
     this._element.querySelector(`.point__destination-input`).addEventListener(`change`, this._onCountryChange);
-
     if (this._state.isStartDate) {
       flatpickr(`.point__input--time-start`, {
         locale: {
@@ -231,18 +238,21 @@ class TripEdit extends Component {
     this._element.querySelector(`form`).removeEventListener(`click`, this.onSubmitClick);
     this._element.querySelector(`.point__button--delete`).removeEventListener(`click`, this._onDeleteClick);
     this._element.querySelector(`.travel-way__label`).removeEventListener(`click`, this._onTypeClick);
-    this._element.querySelector(`.point__time`).removeEventListener(`click`, this._onChangeDate);
+    this._element.querySelector(`.point__input--time-start`).removeEventListener(`click`, this._onChangeStartDate);
+    this._element.querySelector(`.point__input--time-finish`).removeEventListener(`click`, this._onChangeFinishDate);
+    this._element.querySelector(`.point__destination-input`).removeEventListener(`change`, this._onCountryChange);
   }
 
-  update(data) {
-    this._type = data.type;
-    this._country = data.country;
-    this._timeStart = data.timeStart;
-    this._timeFinish = data.timeFinish;
-    this._price = data.price;
-    this._offers = data.offers;
-    this._description = data.description;
-    this._photos = data.photos;
+  update(newObject) {
+    this._id = newObject.id;
+    this._type = newObject.type;
+    this._country = newObject.country;
+    this._timeStart = newObject.timeStart;
+    this._timeFinish = newObject.timeFinish;
+    this._price = newObject.price;
+    this._offers = newObject.offers;
+    this._description = newObject.description;
+    this._photos = newObject.photos;
   }
 
   get template() {
@@ -294,8 +304,8 @@ class TripEdit extends Component {
 
       <label class="point__time">
         choose time
-        <input class="point__input point__input--time-start" type="text" value="${this.startToField()}" name="dateStart" placeholder="${this.startToField()}">
-        <input class="point__input point__input--time-finish" type="text" value="${this.finishToField()}" name="dateEnd" placeholder="${this.finishToField()}">
+        <input class="point__input point__input--time-start" type="text" value="" name="dateStart" placeholder="${this.startToField()}">
+        <input class="point__input point__input--time-finish" type="text" value="" name="dateEnd" placeholder="${this.finishToField()}">
       </label>
 
       <label class="point__price">
@@ -335,6 +345,39 @@ class TripEdit extends Component {
     </section>
   </form>
 </article>`.trim();
+  }
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._element.style.animation = `<style>
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(5px);
+    }
+  }
+  .shake {
+    animation: shake 0.6s;
+  }
+</style>`;
+    }, ANIMATION_TIMEOUT);
   }
 }
 
