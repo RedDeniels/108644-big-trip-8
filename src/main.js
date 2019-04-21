@@ -101,8 +101,7 @@ const renderTripPoint = (points) => {
             trip.update(tripData);
           })
           .catch(() => {
-            newTrip._element.style.border = `2`;
-            newTrip._element.style.borderColor = `red`;
+            newTrip._element.style.border = `2px solid red`;
             newTrip.shake();
             buttonLoadUnblock();
           });
