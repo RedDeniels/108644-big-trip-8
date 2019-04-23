@@ -70,60 +70,72 @@ const renderTripPoint = (points) => {
 
     trips[i].transfer = (oldTrip) => {
       let newTrip = tripsEdit[trips.indexOf(oldTrip)];
+      const alertTripBorder = () => {
+        newTrip._element.style.border = `2px solid red`;
+        newTrip.shake();
+      };
+      const clearTripBorder = () => {
+        newTrip._element.style.border = ``;
+      };
+      const block = () => {
+        newTrip._element.querySelector(`.point__button--save`).disabled = true;
+        newTrip._element.querySelector(`.point__button--delete`).disabled = true;
+      };
+      const unblock = () => {
+        newTrip._element.querySelector(`.point__button--save`).disabled = false;
+        newTrip._element.querySelector(`.point__button--delete`).disabled = false;
+      };
       newTrip.render(TRIP_DAY_ITEMS);
       TRIP_DAY_ITEMS.replaceChild(tripsEdit[trips.indexOf(oldTrip)]._element, oldTrip._element);
       oldTrip.unrender();
 
       newTrip.onSubmit = (newObject) => {
-        let trip = trips[tripsEdit.indexOf(newTrip)];
-        trip.update(newObject);
-
-        const block = () => {
-          newTrip._element.querySelector(`.point__button--save`).disabled = true;
-          newTrip._element.querySelector(`.point__button--delete`).disabled = true;
-        };
-        const unblock = () => {
-          newTrip._element.querySelector(`.point__button--save`).disabled = false;
-          newTrip._element.querySelector(`.point__button--delete`).disabled = false;
-        };
         const buttonLoadBlock = () => {
           newTrip._element.querySelector(`.point__button--save`).innerHTML = BUTTON_LOAD_TEXT_BLOCK;
         };
         const buttonLoadUnblock = () => {
           newTrip._element.querySelector(`.point__button--save`).innerHTML = BUTTON_LOAD_TEXT;
         };
+        const closeTrip = () => {
+          unblock();
+          trip.render(TRIP_DAY_ITEMS);
+          TRIP_DAY_ITEMS.replaceChild(trip._element, newTrip._element);
+          newTrip.unrender();
+        };
+        clearTripBorder();
+        let trip = trips[tripsEdit.indexOf(newTrip)];
+        trip.update(newObject);
         buttonLoadBlock();
         block();
         api.updateTrip({id: trip._id, data: trip.toRAW()})
           .then((data) => {
             let tripData = new ModelTrip(data);
-            unblock();
             trip.update(tripData);
           })
           .catch(() => {
-            newTrip._element.style.border = `2px solid red`;
-            newTrip.shake();
+            alertTripBorder();
             buttonLoadUnblock();
+            newTrip._element.querySelector(`form`).addEventListener(`submit`, newTrip._onSubmitClick);
+          })
+          .then(() => {
+            closeTrip();
           });
-        trip.render(TRIP_DAY_ITEMS);
-        TRIP_DAY_ITEMS.replaceChild(trip._element, newTrip._element);
-        newTrip.unrender();
       };
 
-      tripsEdit[i].onDelete = () => {
-        api.deleteTrip({id: tripsEdit[i]._id})
+      newTrip.onDelete = () => {
+        api.deleteTrip({id: newTrip._id})
         .then(() => api.getTrips())
         .then(renderTripPoint)
         .catch(alert);
       };
 
-      tripsEdit[i].onCountry = () => {
-        let newCountry = tripsEdit[i]._element.querySelector(`.point__destination-input`).value;
+      newTrip.onCountry = () => {
+        let newCountry = newTrip._element.querySelector(`.point__destination-input`).value;
         Array.from(destinations).forEach(function (value) {
           if (value.country === newCountry) {
-            tripsEdit[i]._country = value.country;
-            tripsEdit[i]._description = value.description;
-            tripsEdit[i]._photos = value.photos.slice();
+            newTrip._country = value.country;
+            newTrip._description = value.description;
+            newTrip._photos = value.photos.slice();
           }
         });
       };
